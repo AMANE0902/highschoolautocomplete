@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>高校名オートコンプリート</title>
+    <title>高校名選択</title>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
@@ -17,25 +17,25 @@
     </style>
 </head>
 <body>
-    <h2>高校名を入力してください</h2>
+    <h2>高校名を選択してください</h2>
     <input type="text" id="schoolName" placeholder="高校名を入力">
     <div id="suggestions"></div>
     <div id="message"></div>
 
     <script>
+        var schoolNames = [
+            "南多摩中等教育学校", "三鷹中等教育学校", "成女高等学校", "トキワ松学園高等学校", "安田学園高等学校",
+            // ... 他の高校名をここに追加 ...
+        ];
+
+        function findMatches(query, schools) {
+            return schools.filter(school => {
+                const regex = new RegExp(query, 'gi');
+                return school.match(regex);
+            });
+        }
+
         $(function() {
-            var schoolNames = [
-                "南多摩中等教育学校", "三鷹中等教育学校", "成女高等学校", "トキワ松学園高等学校", "安田学園高等学校",
-                // ... 他の高校名をここに追加 ...
-            ];
-
-            function findMatches(query, schools) {
-                return schools.filter(school => {
-                    const regex = new RegExp(query, 'gi');
-                    return school.match(regex);
-                });
-            }
-
             $("#schoolName").on('input', function() {
                 var query = $(this).val();
                 if (query.length < 2) {
@@ -59,14 +59,11 @@
             });
 
             function sendToGoogleForm(schoolName) {
-                // Google フォームの埋め込みURL（実際のURLに置き換えてください）
-                var formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSePxJmT_GZqKhDKzvoNd_soYbdH7PDcXK7TIYDQERtgVqfulw/viewform?usp=pp_url';
+                // 親ウィンドウ（Google フォーム）に選択された高校名を送信
+                window.opener.postMessage({ schoolName: schoolName }, '*');
                 
-                var fullUrl = formUrl + encodeURIComponent(schoolName);
-                
-                window.open(fullUrl, '_blank');
-                
-                $("#message").text(schoolName + " が選択されました。Google フォームが新しいウィンドウで開きます。");
+                // このウィンドウを閉じる
+                window.close();
             }
         });
     </script>
