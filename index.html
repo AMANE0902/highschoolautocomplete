@@ -3,18 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>高校名選択（改善版）</title>
+    <title>高校名選択</title>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; }
         #schoolName { width: 300px; padding: 5px; }
         #suggestions { margin-top: 10px; }
         .suggestion { cursor: pointer; padding: 5px; border: 1px solid #ddd; margin-bottom: 5px; }
         .suggestion:hover { background-color: #f0f0f0; }
-        #message, #debug { margin-top: 10px; }
-        #debug { color: #888; font-size: 0.8em; }
+        #message { margin-top: 10px; color: green; }
     </style>
 </head>
 <body>
@@ -22,12 +21,10 @@
     <input type="text" id="schoolName" placeholder="高校名を入力">
     <div id="suggestions"></div>
     <div id="message"></div>
-    <div id="debug"></div>
 
     <script>
         var schoolNames = [
             "南多摩中等教育学校", "三鷹中等教育学校", "成女高等学校", "トキワ松学園高等学校", "安田学園高等学校",
-            "郁文館高等学校", "東京都立荻窪高等学校", "東京都立葛西南高等学校", "京華商業高等学校", "共立女子高等学校",
             // ... 他の高校名をここに追加 ...
         ];
 
@@ -41,16 +38,12 @@
         $(function() {
             $("#schoolName").on('input', function() {
                 var query = $(this).val();
-                $('#debug').text('入力: ' + query);  // デバッグ情報
-
                 if (query.length < 2) {
                     $('#suggestions').empty();
                     return;
                 }
 
                 var matches = findMatches(query, schoolNames);
-                $('#debug').append(', 一致数: ' + matches.length);  // デバッグ情報
-
                 var html = matches.map(school => `
                     <div class="suggestion">${school}</div>
                 `).join('');
@@ -62,18 +55,15 @@
                 var selectedSchool = $(this).text();
                 $("#schoolName").val(selectedSchool);
                 $('#suggestions').empty();
-                $('#message').text('選択された高校: ' + selectedSchool);
                 sendToGoogleForm(selectedSchool);
             });
 
             function sendToGoogleForm(schoolName) {
-                try {
-                    window.opener.postMessage({ schoolName: schoolName }, '*');
-                    $('#debug').append(', 送信成功');  // デバッグ情報
-                    window.close();
-                } catch (error) {
-                    $('#debug').append(', エラー: ' + error.message);  // デバッグ情報
-                }
+                // 親ウィンドウ（Google フォーム）に選択された高校名を送信
+                window.opener.postMessage({ schoolName: schoolName }, '*');
+                
+                // このウィンドウを閉じる
+                window.close();
             }
         });
     </script>
