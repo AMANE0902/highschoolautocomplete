@@ -18,7 +18,7 @@
 </head>
 <body>
     <h2>高校名を選択してください</h2>
-    <input type="text" id="schoolName" placeholder="高校名を入力">
+    <input type="text" id="schoolName" placeholder="高校名を入力（2文字以上）">
     <div id="suggestions"></div>
     <div id="message"></div>
 
@@ -40,10 +40,18 @@
                 var query = $(this).val();
                 if (query.length < 2) {
                     $('#suggestions').empty();
+                    $('#message').text("2文字以上入力してください");
                     return;
                 }
 
+                $('#message').text("");  // メッセージをクリア
+
                 var matches = findMatches(query, schoolNames);
+                if (matches.length === 0) {
+                    $('#suggestions').html("<div>一致する学校が見つかりません</div>");
+                    return;
+                }
+
                 var html = matches.map(school => `
                     <div class="suggestion">${school}</div>
                 `).join('');
