@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>高校名選択</title>
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; }
         #schoolName { width: 300px; padding: 5px; }
@@ -15,57 +13,53 @@
         .suggestion:hover { background-color: #f0f0f0; }
         #message { margin-top: 10px; color: green; }
     </style>
-</head>
-<body>
-    <h2>高校名を選択してください</h2>
-    <input type="text" id="schoolName" placeholder="高校名を入力">
-    <div id="suggestions"></div>
-    <div id="message"></div>
-
-    <script>
-        var schoolNames = [
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" defer></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js" defer></script>
+    <script defer>
+        const schoolNames = [
             "南多摩中等教育学校", "三鷹中等教育学校", "成女高等学校", "トキワ松学園高等学校", "安田学園高等学校",
             // ... 他の高校名をここに追加 ...
         ];
 
         function findMatches(query, schools) {
-            return schools.filter(school => {
-                const regex = new RegExp(query, 'gi');
-                return school.match(regex);
-            });
+            const regex = new RegExp(query, 'gi');
+            return schools.filter(school => school.match(regex));
         }
 
         $(function() {
             $("#schoolName").on('input', function() {
-                var query = $(this).val();
+                const query = $(this).val();
                 if (query.length < 2) {
                     $('#suggestions').empty();
                     return;
                 }
 
-                var matches = findMatches(query, schoolNames);
-                var html = matches.map(school => `
+                const matches = findMatches(query, schoolNames);
+                const html = matches.map(school => `
                     <div class="suggestion">${school}</div>
                 `).join('');
 
                 $('#suggestions').html(html);
             });
 
-            $(document).on('click', '.suggestion', function() {
-                var selectedSchool = $(this).text();
+            $('#suggestions').on('click', '.suggestion', function() {
+                const selectedSchool = $(this).text();
                 $("#schoolName").val(selectedSchool);
                 $('#suggestions').empty();
                 sendToGoogleForm(selectedSchool);
             });
 
             function sendToGoogleForm(schoolName) {
-                // 親ウィンドウ（Google フォーム）に選択された高校名を送信
                 window.opener.postMessage({ schoolName: schoolName }, '*');
-                
-                // このウィンドウを閉じる
                 window.close();
             }
         });
     </script>
+</head>
+<body>
+    <h2>高校名を選択してください</h2>
+    <input type="text" id="schoolName" placeholder="高校名を入力">
+    <div id="suggestions"></div>
+    <div id="message"></div>
 </body>
 </html>
