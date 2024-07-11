@@ -22,9 +22,8 @@
         }
 
         function selectSchool(school) {
-            const urlParams = new URLSearchParams(window.location.search);
-            const formUrl = urlParams.get('formUrl');
-            window.location.href = `${formUrl}&entry.1705679315=${encodeURIComponent(school)}`; // GoogleフォームのURLに選択した高校名を追加
+            const formUrl = "https://docs.google.com/forms/d/e/1FAIpQLSewBpJnDYjte_cLItD7Yw0ik8IBNwx4nBoew6oYFbid01SH1w/viewform?usp=pp_url";
+            window.location.href = `${formUrl}&entry.1720414201=${encodeURIComponent(school)}`;
         }
     </script>
 </head>
